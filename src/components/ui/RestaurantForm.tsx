@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
-interface SimpleRestaurantFormProps {
+interface RestaurantFormProps {
   initialData?: Restaurant | null;
   onSubmit: (data: Omit<Restaurant, 'id' | 'createdAt'>) => void;
 }
@@ -15,7 +15,7 @@ interface SimpleRestaurantFormProps {
 export default function RestaurantForm({
   initialData,
   onSubmit,
-}: SimpleRestaurantFormProps) {
+}: RestaurantFormProps) {
   const [name, setName] = useState(initialData?.name || '');
   const [cuisine, setCuisine] = useState(initialData?.cuisine || '');
   const [city, setCity] = useState(initialData?.city || '');
