@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import SimpleRestaurantForm from '@/components/ui/RestaurantForm'; // Corrigido o caminho e o nome
+import RestaurantForm from '@/components/ui/RestaurantForm'; // Corrigido o caminho e o nome
 
 export default function DashboardPage() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
