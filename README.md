@@ -41,8 +41,8 @@ Sonner: Notificações (toasts).
 
 🛠️ Como Usar (Localmente)
 Clone o repositório:
-git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
-cd SEU_REPOSITORIO
+git clone https://github.com/OffDiasz/GERENCIADOR-DE-RESTAURANTES
+cd my-restaurant-app
 
 Instale as dependências:
 npm install
