@@ -8,7 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
 interface SimpleRestaurantFormProps {
-  initialData?: Restaurant;
+  initialData?: Restaurant | null;
   onSubmit: (data: Omit<Restaurant, 'id' | 'createdAt'>) => void;
 }
 
