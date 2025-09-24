@@ -94,7 +94,7 @@ export default function DashboardPage() {
                   {editingRestaurant ? 'Editar' : 'Adicionar'} Restaurante
                 </DialogTitle>
               </DialogHeader>
-              <SimpleRestaurantForm
+              <RestaurantForm
                 initialData={editingRestaurant}
                 onSubmit={addOrUpdateRestaurant}
               />
