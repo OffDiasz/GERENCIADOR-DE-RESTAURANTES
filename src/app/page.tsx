@@ -1,47 +1,67 @@
 'use client';
 
-import { useState } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
+import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { setCookie } from 'nookies';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const supabase = createClientComponentClient();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    const hardcodedUser = 'admin';
-    const hardcodedPass = 'sec00000@';
+    setLoading(true);
 
-    if (username === hardcodedUser && password === hardcodedPass) {
-      setCookie(null, 'auth_token', 'your-simple-token', {
-        maxAge: 30 * 24 * 60 * 60,
-        path: '/',
-      });
-      window.location.href = '/dashboard';
-      toast.success('Login bem-sucedido!');
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) {
+      toast.error('Erro ao fazer login: ' + error.message);
     } else {
-      toast.error('Credenciais inválidas.');
+      toast.success('Login bem-sucedido!');
+      router.push('/dashboard');
     }
+    setLoading(false);
+  };
+
+  const handleSignUp = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      toast.error('Erro ao cadastrar: ' + error.message);
+    } else {
+      toast.success('Registro bem-sucedido! Verifique seu e-mail para confirmar.');
+    }
+    setLoading(false);
   };
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-100">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Entrar ou Cadastrar</CardTitle>
+          <CardDescription>Use seu e-mail e senha para acessar.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="grid gap-4">
+          <form onSubmit={handleSignIn} className="grid gap-4">
             <Input
-              placeholder="Usuário"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              placeholder="E-mail"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
             <Input
@@ -51,8 +71,17 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <Button type="submit" className="w-full">
-              Entrar
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Entrando...' : 'Entrar'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleSignUp}
+              disabled={loading}
+              className="w-full"
+            >
+              {loading ? 'Registrando...' : 'Registrar'}
             </Button>
           </form>
         </CardContent>
