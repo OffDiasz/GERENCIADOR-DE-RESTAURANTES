@@ -1,20 +1,39 @@
+// middleware.ts
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
+
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
-  // Pega o token de autenticação do cookie
-  const authToken = request.cookies.get('auth_token')?.value;
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next();
+  const supabase = createMiddlewareClient({ req, res });
 
-  // Se não houver token, redireciona para a página de login
-  if (!authToken) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  await supabase.auth.getSession();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const pathname = req.nextUrl.pathname;
+
+  // Se o usuário tentar acessar uma rota protegida sem sessão, redireciona para o login
+  if (!session && pathname.startsWith('/dashboard')) {
+    const url = req.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
   }
 
-  // Se houver token, permite o acesso
-  return NextResponse.next();
+  // Se o usuário já tem sessão e tenta acessar a página de login, redireciona para o dashboard
+  if (session && pathname === '/login') {
+    const url = req.nextUrl.clone();
+    url.pathname = '/dashboard';
+    return NextResponse.redirect(url);
+  }
+
+  return res;
 }
 
-// O middleware será aplicado a todas as rotas que começam com /dashboard
+// O middleware será aplicado a todas as rotas que precisam de verificação
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/dashboard/:path*', '/login'],
 };
